@@ -1,13 +1,7 @@
 package com.javarush.test.level22.lesson09.task03;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 /* Составить цепочку слов
 В методе main считайте с консоли имя файла, который содержит слова, разделенные пробелом.
@@ -26,49 +20,57 @@ import java.util.List;
 */
 public class Solution {
     public static void main(String[] args) throws IOException {
-        //...
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(reader.readLine())));
-        reader.close();
+        Scanner scanner = new Scanner(System.in);
+        String fileName = scanner.nextLine();
+        ArrayList<String> list = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
-        ArrayList<String> stringline = new ArrayList<String>();
-
-        while(in.ready()){
-            stringline.addAll(Arrays.asList((in.readLine().split(" "))));
+        while (reader.ready())
+        {
+            String[] s = reader.readLine().split("\\s");
+            Collections.addAll(list, s);
         }
-        in.close();
 
-        String[] words = new String[stringline.size()];
-        words = stringline.toArray(words);
+        reader.close();
+        scanner.close();
+
+        String[] words = new String[list.size()];
+        words = list.toArray(words);
 
         StringBuilder result = getLine(words);
         System.out.println(result.toString());
+
     }
 
     public static StringBuilder getLine(String... words) {
-        List<String> strings  = new ArrayList<>();
+        ArrayList<String> strings  = new ArrayList<>();
         Collections.addAll(strings, words);
         StringBuilder sb = new StringBuilder();
 
-        if (strings.size() == 0)
+        if (strings.size() == 0) {
             return new StringBuilder();
+        }
 
         sb.append(strings.get(0));
         strings.remove(0);
 
-        while (strings.size() > 0){
-            String lastChar = String.valueOf(sb.charAt(sb.length() - 1)).toUpperCase();
-
-            int i = 0;
-            for (String string : strings) {
-                if (string.substring(0, 1).toUpperCase().equals(lastChar)) {
+        while (strings.size()>0){
+            for (int i = 0; i < strings.size(); i++) {
+                String a = strings.get(i).toUpperCase().toLowerCase();
+                String b = sb.toString().toUpperCase().toLowerCase();
+                if (a.charAt(0) == b.charAt(sb.length() - 1))
+                { // в конец
+                    sb.append(" ").append(strings.get(i));
                     strings.remove(i);
-                    sb.append(' ');
-                    sb.append(string);
-                    break;
+                    continue;
                 }
 
-                i++;
+                if (b.charAt(0) == a.charAt(a.length() - 1))
+                { //в начало
+                    sb.insert(0, " ");
+                    sb.insert(0, strings.get(i));
+                    strings.remove(i);
+                }
             }
         }
 
