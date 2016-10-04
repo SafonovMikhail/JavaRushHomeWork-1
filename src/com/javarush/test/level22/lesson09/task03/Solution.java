@@ -1,7 +1,11 @@
 package com.javarush.test.level22.lesson09.task03;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
 
 /* Составить цепочку слов
 В методе main считайте с консоли имя файла, который содержит слова, разделенные пробелом.
@@ -11,10 +15,8 @@ import java.util.*;
 Метод getLine должен возвращать любой вариант.
 Слова разделять пробелом.
 В файле не обязательно будет много слов.
-
 Пример тела входного файла:
 Киев Нью-Йорк Амстердам Вена Мельбурн
-
 Результат:
 Амстердам Мельбурн Нью-Йорк Киев Вена
 */
@@ -24,56 +26,88 @@ public class Solution {
         String fileName = scanner.nextLine();
         ArrayList<String> list = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
-
         while (reader.ready())
         {
             String[] s = reader.readLine().split("\\s");
             Collections.addAll(list, s);
         }
-
         reader.close();
-        scanner.close();
-
         String[] words = new String[list.size()];
         words = list.toArray(words);
-
         StringBuilder result = getLine(words);
         System.out.println(result.toString());
+        scanner.close();
 
     }
 
     public static StringBuilder getLine(String... words) {
-        ArrayList<String> strings  = new ArrayList<>();
-        Collections.addAll(strings, words);
-        StringBuilder sb = new StringBuilder();
+        if (words == null) {return new StringBuilder();}
+        if (words.length==0) {return new StringBuilder();}
 
-        if (strings.size() == 0) {
-            return new StringBuilder();
+        //String[] array = i.split(" ");
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (String s: words) {
+            arrayList.add(s);
         }
+        int neededCounter = arrayList.size();
+        StringBuilder resultBuilder = new StringBuilder();
+        while (true)
+        {
+            int wordCounter = 0;
+            ArrayList<String> temp = new ArrayList<>(arrayList);
+            Collections.shuffle(temp);
+            StringBuilder tempBuilder = new StringBuilder();
+            tempBuilder.append(arrayList.get(0));
+            temp.remove(arrayList.get(0));
+            boolean canAdd = true;
 
-        sb.append(strings.get(0));
-        strings.remove(0);
-
-        while (strings.size()>0){
-            for (int i = 0; i < strings.size(); i++) {
-                String a = strings.get(i).toUpperCase().toLowerCase();
-                String b = sb.toString().toUpperCase().toLowerCase();
-                if (a.charAt(0) == b.charAt(sb.length() - 1))
-                { // в конец
-                    sb.append(" ").append(strings.get(i));
-                    strings.remove(i);
-                    continue;
+            while (canAdd)
+            {
+                {
+                    ArrayList<String> toDelete = new ArrayList<>();
+                    for (String s : temp)
+                    {
+                        StringBuilder word = new StringBuilder(s);
+                        // если конец стрингбилдера равен первой букве другого слова
+                        if (tempBuilder.substring(tempBuilder.length() - 1).equals(word.reverse().substring(s.length() - 1).toLowerCase()))
+                        {
+                            tempBuilder.append(" " + s);
+                            toDelete.add(s);
+                            wordCounter++;
+                            continue;
+                        }
+                        // если начало стрингбилдера равно последней букве другого слова "Киев Вена" - "Нью Йорк"
+                        if (tempBuilder.toString().substring(0, 1).toLowerCase().equals(s.substring(s.length() - 1).toLowerCase()))
+                        {
+                            tempBuilder.reverse().append(" " + word);
+                            tempBuilder.reverse();
+                            toDelete.add(s);
+                            wordCounter++;
+                            continue;
+                        }
+                    }
+                    // удаляем уже вставленные слова
+                    for (String s : toDelete)
+                    {
+                        temp.remove(s);
+                    }
+                    toDelete.clear();
+                    // если ни к концу ни к началу нельзя добавить символ - break;
+                    for (String s : temp)
+                    {
+                        StringBuilder word = new StringBuilder(s);
+                        if (!tempBuilder.substring(tempBuilder.length() - 1).equals(word.reverse().substring(s.length() - 1).toLowerCase()) &&
+                                !tempBuilder.toString().substring(0, 1).toLowerCase().equals(s.substring(s.length() - 1).toLowerCase()))
+                        {
+                            canAdd = false;
+                        }
+                    }
                 }
-
-                if (b.charAt(0) == a.charAt(a.length() - 1))
-                { //в начало
-                    sb.insert(0, " ");
-                    sb.insert(0, strings.get(i));
-                    strings.remove(i);
+                resultBuilder = tempBuilder;
+                if (wordCounter==neededCounter-1) {
+                    return resultBuilder;
                 }
             }
         }
-
-        return sb;
     }
 }
