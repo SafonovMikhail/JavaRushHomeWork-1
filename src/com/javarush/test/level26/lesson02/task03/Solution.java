@@ -28,7 +28,7 @@ public class Solution {
                 if (compare != 0)
                     break;
             }
-            
+
             return compare;
         }
     }
