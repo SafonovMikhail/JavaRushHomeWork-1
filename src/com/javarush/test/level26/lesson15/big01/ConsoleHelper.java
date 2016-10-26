@@ -24,4 +24,50 @@ public class ConsoleHelper {
 
         return message;
     }
+
+    public static String askCurrencyCode() throws InterruptOperationException {
+        String inStr;
+
+        while (true) {
+            inStr = readString();
+            if (inStr.length() == 3)
+                break;
+            else
+                System.out.println("Данные не корректны, введите ещё раз!");
+
+        }
+
+        return inStr.toUpperCase();
+    }
+
+    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
+    {
+        String[] array;
+        System.out.println("Введите номинал и количество");
+
+        while (true) {
+            String s = readString();
+            array = s.split(" ");
+            int k;
+            int l;
+            try {
+                k = Integer.parseInt(array[0]);
+                l = Integer.parseInt(array[1]);
+            }
+            catch (Exception e) {
+                System.out.println("Данные не валидны, введите ещё раз");;
+                continue;
+            }
+
+            if (k <= 0 || l <= 0 || array.length > 2) {
+                System.out.println("Данные не валидны, введите ещё раз");;
+                continue;
+            }
+
+            break;
+        }
+
+        return array;
+    }
+
 }
