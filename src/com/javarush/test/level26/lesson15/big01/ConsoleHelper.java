@@ -7,67 +7,57 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ConsoleHelper {
-    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     public static void writeMessage(String message) {
         System.out.println(message);
     }
 
     public static String readString() {
-        String message = "";
+        String s = "";
 
         try {
-            message = reader.readLine();
+            s = reader.readLine();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return message;
+        }
+        return s;
     }
 
-    public static String askCurrencyCode() throws InterruptOperationException {
-        String inStr;
+    public static String askCurrencyCode() {
+        String code;
 
-        while (true) {
-            inStr = readString();
-            if (inStr.length() == 3)
+        writeMessage("Input currency code:");
+
+        while (true){
+            code = readString();
+            if(code.matches("\\w{3}")){
                 break;
-            else
-                System.out.println("Данные не корректны, введите ещё раз!");
-
+            }else
+                writeMessage("Invalid currency code, retry.");
         }
 
-        return inStr.toUpperCase();
+        return code.toUpperCase();
     }
 
-    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
-    {
-        String[] array;
-        System.out.println("Введите номинал и количество");
+    public static String[] getValidTwoDigits(String currencyCode) {
+
+        String valueAndAmount;
+        String[] result;
+        writeMessage("Input nominal and amount:");
 
         while (true) {
-            String s = readString();
-            array = s.split(" ");
-            int k;
-            int l;
-            try {
-                k = Integer.parseInt(array[0]);
-                l = Integer.parseInt(array[1]);
+            valueAndAmount = readString();
+            if (valueAndAmount.matches("\\d+ \\d+")) {
+                result = valueAndAmount.split(" ");
+                if(result[0].equals("0") || result[1].equals("0")){
+                    writeMessage("Invalid nominal and amount, retry.");
+                    continue;
+                }
+                return result;
+            } else{
+                writeMessage("Invalid nominal and amount, retry.");
             }
-            catch (Exception e) {
-                System.out.println("Данные не валидны, введите ещё раз");;
-                continue;
-            }
-
-            if (k <= 0 || l <= 0 || array.length > 2) {
-                System.out.println("Данные не валидны, введите ещё раз");;
-                continue;
-            }
-
-            break;
         }
-
-        return array;
     }
-
 }

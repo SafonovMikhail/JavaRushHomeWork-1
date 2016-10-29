@@ -1,23 +1,14 @@
 package com.javarush.test.level26.lesson15.big01;
 
-import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
 import java.util.Locale;
 
 public class CashMachine {
     public static void main(String[] args) {
         Locale.setDefault(Locale.ENGLISH);
-        try {
-            String s = ConsoleHelper.askCurrencyCode();
-            String[] w = ConsoleHelper.getValidTwoDigits(s);
-            int k = Integer.valueOf(w[0]);
-            int l = Integer.valueOf(w[1]);
-            CurrencyManipulator cm = new CurrencyManipulator(s);
-            cm.addAmount(k, l);
-
-        } catch (InterruptOperationException e) {
-            e.printStackTrace();
-        }
+        String code = ConsoleHelper.askCurrencyCode();
+        String[] digits = ConsoleHelper.getValidTwoDigits(code);
+        CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(code);
+        currencyManipulator.addAmount(Integer.parseInt(digits[0]), Integer.parseInt(digits[1]));
 
     }
 }
