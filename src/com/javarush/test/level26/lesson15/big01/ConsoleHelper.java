@@ -5,6 +5,8 @@ import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationExce
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsoleHelper {
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -58,6 +60,20 @@ public class ConsoleHelper {
             } else{
                 writeMessage("Invalid nominal and amount, retry.");
             }
+        }
+    }
+
+    public static Operation askOperation() throws InterruptOperationException {
+        while (true) {
+            String line = readString();
+
+            Pattern p = Pattern.compile("^[1-4]$");
+            Matcher m = p.matcher(line);
+
+            if (m.matches())
+                return Operation.getAllowableOperationByOrdinal(Integer.parseInt(line));
+            else
+                writeMessage("invalid data");
         }
     }
 }
