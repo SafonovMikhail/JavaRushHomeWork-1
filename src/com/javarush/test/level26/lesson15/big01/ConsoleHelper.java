@@ -1,12 +1,8 @@
 package com.javarush.test.level26.lesson15.big01;
 
-import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ConsoleHelper {
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -63,17 +59,24 @@ public class ConsoleHelper {
         }
     }
 
-    public static Operation askOperation() throws InterruptOperationException {
-        while (true) {
-            String line = readString();
+    public static Operation askOperation() {
+        boolean correctInput = false;
+        Operation chosenOperation = Operation.INFO;
 
-            Pattern p = Pattern.compile("^[1-4]$");
-            Matcher m = p.matcher(line);
+        while (!correctInput) {
+            writeMessage("Выберите вашу операцию 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT: ");
+            String input = readString();
+            int choise;
 
-            if (m.matches())
-                return Operation.getAllowableOperationByOrdinal(Integer.parseInt(line));
-            else
-                writeMessage("invalid data");
+            try {
+                choise = Integer.valueOf(input.trim());
+                chosenOperation = Operation.getAllowableOperationByOrdinal(choise);
+                correctInput = true;
+            } catch (IllegalArgumentException e) {
+            }
         }
+
+        return chosenOperation;
+
     }
 }
