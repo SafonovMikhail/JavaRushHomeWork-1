@@ -1,5 +1,7 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import com.javarush.test.level26.lesson15.big01.command.CommandExecutor;
+
 import java.util.Locale;
 
 public class CashMachine {
@@ -10,5 +12,9 @@ public class CashMachine {
         CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(code);
         currencyManipulator.addAmount(Integer.parseInt(digits[0]), Integer.parseInt(digits[1]));
         Operation operation = ConsoleHelper.askOperation();
+
+        do {
+            CommandExecutor.execute(operation);
+        } while (operation != Operation.EXIT);
     }
 }
